@@ -6,6 +6,10 @@ Marcos Balatka
 """
 import os, random, math
 
+#parametros
+entrada = "uf20-01.cnf"
+t0 = 50#temperatura inicial
+tf = 0#temperatura final
 
 def clear():
     os.system("cls")
@@ -23,10 +27,10 @@ def readFile(entrada):#ler entrada
         for j in range(3):
             p[i][j] = int(p[i][j])
         
-    return p, int(linhas[7].split()[2])
+    return p, int(linhas[7].split()[2]), int(linhas[7].split()[3])
 
 def decTemperatura(t):#decaimento da temperatura
-    return t - 0.01
+    return t - 0.005
     
 def energia(prob, resp):
     e = 0
@@ -49,7 +53,7 @@ def energia(prob, resp):
         #print("p0=", p0, " p1=", p1, " p2=", p2)
         if p0 == 1 or p1 == 1 or p2 == 1:#or
             e += 1
-    return (91 - e)*10
+    return (qtdC - e)*10
 
 def geraCandidato(c):
     nC = []
@@ -67,14 +71,12 @@ def geraCandidato(c):
 
     
 def sa():
-    entrada = "uf20-01.cnf"
-    problema, tamanho = readFile(entrada)
+    global problema, tamanho, qtdC
+    
+    problema, tamanho, qtdC = readFile(entrada)
     resposta = []
     for i in range(tamanho):
         resposta += [random.randint(0, 1)]
-
-    t0 = 50#temperatura inicial
-    tf = 0#temperatura final
 
     temperatura = t0
     candidato = resposta
@@ -91,6 +93,7 @@ def sa():
             candidato = novoCandidato
             ener = nEner
         else:
+            print("chance=", pow(math.e, -delta/temperatura))
             if random.random() < pow(math.e, -delta/temperatura):
                 candidato = novoCandidato
                 ener = nEner
