@@ -4,14 +4,13 @@ CCT Udesc
 IAR
 Marcos Balatka
 """
-import os
+import os, random, math
 
 
 def clear():
     os.system("cls")
 
 def readFile(entrada):#ler entrada
-    global linhas, f
     f = open(entrada, "r+")
     linhas = f.readlines()
     inicioClausulas = 8#linha que começa as clausulas
@@ -27,7 +26,7 @@ def readFile(entrada):#ler entrada
     return p, int(linhas[7].split()[2])
 
 def decTemperatura(t):#decaimento da temperatura
-    t -= 1
+    return t - 1
     
 def energia(prob, resp):
     e = 0
@@ -50,17 +49,53 @@ def energia(prob, resp):
         #print("p0=", p0, " p1=", p1, " p2=", p2)
         if p0 == 1 or p1 == 1 or p2 == 1:#or
             e += 1
-    return e
+    return 1/e
+
+def geraCandidato(c):
+    nC = []
+    for i in c:
+        nC += [i]
+    for j in range(5):
+        p = random.randint(0, len(c))
+        if nC[p - 1] == 1:
+            nC[p - 1] = 0
+        else:
+            nC[p - 1] = 1
+            
+    #print("novo Candidato:", nC)
+    return nC
+
     
-entrada = "uf20-01.cnf"
-problema, tamanho = readFile(entrada)
-resposta = []
-for i in range(tamanho):
-    resposta += [1]
+def sa():
+    entrada = "uf20-01.cnf"
+    problema, tamanho = readFile(entrada)
+    resposta = []
+    for i in range(tamanho):
+        resposta += [random.randint(0, 1)]
 
-t0 = 1000#temperatura inicial
-tf = 0#temperatura final
+    t0 = 10000#temperatura inicial
+    tf = 0#temperatura final
 
+    temperatura = t0
+    candidato = resposta
+    ener = energia(problema, candidato)
+
+    #loop principal
+    while temperatura > tf and  1/ener != 91:
+        print("Temperatura=", temperatura, "Energia=", 1/ener)
+        novoCandidato = geraCandidato(candidato)
+        nEner = energia(problema, novoCandidato)
+        delta = nEner - ener
+        if delta <= 0:
+            candidato = novoCandidato
+            ener = nEner
+        """else:
+            if random.random() <= pow(math.e, -delta/temperatura):
+                candidato = novoCandidato
+                ener = nEner"""
+        temperatura = decTemperatura(temperatura)
+        
+    print("Resposta=", candidato, " | Energia=", 1/ener, " | Minimo global=", 1/(1/91))
 
 
 
