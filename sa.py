@@ -11,7 +11,7 @@ entrada = "uf250-01.cnf"
 t0 = 70#temperatura inicial
 tf = 0.01#temperatura final
 
-maxIt = 500000#quantidade maxima de iteracoes
+maxIt = 100000#quantidade maxima de iteracoes
 txDecT = 0.0001
 
 def clear():
@@ -72,6 +72,12 @@ def geraCandidato(c):
     #print("novo Candidato:", nC)
     return nC
 
+def geraCandidatoAleatorio():
+    global tamanho
+    resposta = []
+    for i in range(tamanho):
+        resposta += [random.randint(0, 1)]
+    return resposta
     
 def sa():
     global problema, tamanho, qtdC
@@ -106,8 +112,23 @@ def sa():
             print("Temperatura= %.5f" % temperatura, "\tEnergia= ", ener, "\tIteracao= ", iteracoes)
         
     print("Resposta=", candidato, " | Energia=", ener, " | Minimo global=", 0)
-
-
+    
+def rs():
+    global problema, tamanho, qtdC
+    iteracoes = 0
+    problema, tamanho, qtdC = readFile(entrada)
+    candidato = geraCandidatoAleatorio()
+    ener = energia(problema, candidato, qtdC)
+    while ener != 0 and iteracoes < maxIt:
+        nCandidato = geraCandidatoAleatorio()
+        nEner = energia(problema, nCandidato, qtdC)
+        if nEner < ener:
+            candidato =nCandidato
+            ener = nEner
+        iteracoes += 1
+        if(iteracoes % 100 == 0):
+            print("Energia= ", ener, "\tIteracao= ", iteracoes)
+    print("Resposta=", candidato, " | Energia=", ener, " | Minimo global=", 0)
 
 
 
