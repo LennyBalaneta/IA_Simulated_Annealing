@@ -4,15 +4,27 @@ CCT Udesc
 IAR
 Marcos Balatka
 """
+
+"""
+Gerar graficos
+import matplotlib.pyplot as plt
+sa.sa() ou sa.rs()
+plt.plot(sa.energiaResp)
+plt.ylabel("Energia")
+plt.xlabel("Iteracoes")
+plt.show()
+"""
 import os, random, math
 
 #parametros
-entrada = "uf250-01.cnf"
+entrada = "uf100-01.cnf"
 t0 = 70#temperatura inicial
 tf = 0.01#temperatura final
 
 maxIt = 100000#quantidade maxima de iteracoes
-txDecT = 0.0001
+txDecT = 0.0001#taxa de decaimento da temperatura
+
+energiaResp = []
 
 def clear():
     os.system("cls")
@@ -80,7 +92,8 @@ def geraCandidatoAleatorio():
     return resposta
     
 def sa():
-    global problema, tamanho, qtdC
+    global problema, tamanho, qtdC, energiaResp
+    energiaResp = []
     
     problema, tamanho, qtdC = readFile(entrada)
     resposta = []
@@ -110,11 +123,13 @@ def sa():
         iteracoes += 1
         if(iteracoes % 100 == 0):
             print("Temperatura= %.5f" % temperatura, "\tEnergia= ", ener, "\tIteracao= ", iteracoes)
-        
+        energiaResp += [ener]
     print("Resposta=", candidato, " | Energia=", ener, " | Minimo global=", 0)
+    return ener
     
 def rs():
-    global problema, tamanho, qtdC
+    global problema, tamanho, qtdC, energiaResp
+    energiaResp = []
     iteracoes = 0
     problema, tamanho, qtdC = readFile(entrada)
     candidato = geraCandidatoAleatorio()
@@ -128,7 +143,9 @@ def rs():
         iteracoes += 1
         if(iteracoes % 100 == 0):
             print("Energia= ", ener, "\tIteracao= ", iteracoes)
+        energiaResp += [ener]
     print("Resposta=", candidato, " | Energia=", ener, " | Minimo global=", 0)
+    return ener
 
 
 
